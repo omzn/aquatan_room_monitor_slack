@@ -3,12 +3,21 @@
 
 あくあたん在室管理システムのバックエンドが稼働した状態で動作するSlackフロントエンドです．
 
-### 
+### 何をするの?
 
+ある日の最初にビーコンが検知されたときに，「おかえり」の挨拶をslackでリプしてくれます．また，ボットにメンションで「誰かいるの？」などと問いかけると，現在の検知状況を知らせてくれます．
 
-### 設定
+* `welcomeback.py`: Slackerによる実装で，定期的にDBをチェックして「おかえり」をリプします．
+* `who.py`: Slackbotによる実装で，「誰か」に対してリプを返して，現在の在室状況を知らせます．
 
-`slackbot_settings.py`に設定を記述します．
+### バックエンドの設定
+
+* `ble_tag`テーブルの`slack`に，ビーコンに対応するmember IDを記載しておきます．
+
+### Slack botの設定
+
+* ワークスペースでbotを1つ作成し，tokenを取得します．
+* `slackbot_settings.py`に設定を記述します．
 
 * `API_TOKEN`: slackワークスペースのbotにアクセスするためのトークンを記述します．（必須）
 * `RESPOND_CHANNEL`: botが反応するチャンネルを指定します．
@@ -28,4 +37,20 @@ DB_HOST = 'localhot'
 DB_NAME = 'ibeacon'
 DB_USER = 'aquatan'
 DB_PASS = 'aquatan'
+```
+
+### 実行
+
+2つのプログラムとも無限ループしますので，バックグラウンド実行させます．pm2などのプロセス管理ツールを使うと便利です．
+
+```sh
+$ python3 who.py &
+$ python3 welcomeback.py &
+```
+
+pm2を利用した設定例
+```sh
+$ pm2 start who.py --interpretor python3 --name slack-who
+$ pm2 start welcomeback.py --interpretor python3 --name slack-welcomeback
+$ pm2 save
 ```
