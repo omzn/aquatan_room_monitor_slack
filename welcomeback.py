@@ -19,7 +19,7 @@ def sayWelcomeback():
             dt_now = datetime.now().strftime("%Y-%m-%d")
             found_t = datetime.strptime(ib_mon[1], "%Y-%m-%d  %H:%M:%S").strftime("%Y-%m-%d")
             hello = ibeacondb.n("hello_slack_{}".format(ib[0]))
-            if not hello and re.match(r'Found',ib_mon[0]) and dt_now == found_t:
+            if (not hello or hello[0] != dt_now) and re.match(r'Found',ib_mon[0]) and dt_now == found_t:
                 ibeacondb.set_n("hello_slack_{}".format(ib[0]),dt_now)
                 slack = Slacker(slackbot_settings.API_TOKEN)
                 slack.chat.post_message(
